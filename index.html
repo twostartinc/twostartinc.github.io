@@ -3,14 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0; url=https://discord.gg/9XB4JxHNXp">
-    <script>
-        // JavaScriptによるリダイレクト（メタタグが機能しない場合）
-        window.location.href = "https://discord.gg/9XB4JxHNXp";
-    </script>
+    <title>a</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: url('https://i.imgur.com/zVq4P6n_d.jpeg') no-repeat center center/cover;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .drop {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            width: 2px;
+            height: 10px;
+            animation: fall 0.5s linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .container {
+            position: relative;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px);
+            z-index: 3;
+            display: block;
+            opacity: 0;
+            transform: translateY(100px) scale(0.8);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #bbb;
+            margin-top: 10px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #007bff;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #555;
+        }
+
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 3;
+        }
+
+        .start-screen p {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .contact-modal {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%) scale(0.5);
+            width: 80%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+            opacity: 0;
+            z-index: 4;
+        }
+
+        .contact-modal h2 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .contact-modal.open {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        .overlay.active {
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .profile-img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <p>リダイレクト中です。もし自動的に移動しない場合は、<a href="https://discord.gg/9XB4JxHNXp">こちら</a>をクリックしてください。</p>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="rain" id="rain"></div>
+
+    <div class="start-screen" id="start-screen">
+        <p>このサイトは音楽が流れます。それでも良い方はクリックしてください。</p>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="a.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="container" id="main-content">
+        <img src="https://i.imgur.com/3ciw4F1_d.png" alt="Profile" class="profile-img">
+        <h1>FranToly</h1>
+        <p>写真撮影&散歩 @ 淫夢厨</p>
+        <div class="buttons">
+            <a href="https://www.youtube.com/@TwoStartinc" target="_blank" class="btn btn-primary">Youtube</a>
+            <button class="btn btn-secondary" id="contact-btn">Contact</button>
+        </div>
+    </div>
+
+    <div class="contact-modal" id="contact-modal">
+        <span class="close-btn" id="close-btn">&times;</span>
+        <h2>Contact</h2>
+        <a href="https://discord.gg/9XB4JxHNXp" target="_blank" class="btn btn-primary">Discordに入る</a>
+        <button class="btn btn-secondary" id="send-email-btn">メアドをコピーする</button>
+    </div>
+
+    <script>
+        document.body.addEventListener("click", function() {
+            document.getElementById("start-screen").style.display = "none";
+            const mainContent = document.getElementById("main-content");
+            mainContent.style.display = "block";
+            setTimeout(() => {
+                mainContent.style.opacity = "1";
+                mainContent.style.transform = "translateY(0) scale(1)";
+            }, 50);
+            const audio = document.getElementById("bg-music");
+            audio.volume = 0.3;
+            audio.play();
+        }, { once: true });
+
+        const contactBtn = document.getElementById("contact-btn");
+        const contactModal = document.getElementById("contact-modal");
+        const overlay = document.getElementById("overlay");
+
+        contactBtn.addEventListener("click", function() {
+            contactModal.classList.add("open");
+            overlay.classList.add("active");
+        });
+
+        const closeBtn = document.getElementById("close-btn");
+
+        closeBtn.addEventListener("click", function() {
+            contactModal.classList.remove("open");
+            overlay.classList.remove("active");
+        });
+
+        overlay.addEventListener("click", function() {
+            contactModal.classList.remove("open");
+            overlay.classList.remove("active");
+        });
+
+        const sendEmailBtn = document.getElementById("send-email-btn");
+        sendEmailBtn.addEventListener("click", function() {
+            const email = "tadokoro@br5.net";
+            navigator.clipboard.writeText(email).then(() => {
+                alert('メアドコピーしたお');
+            }).catch(err => {
+                alert('メアドコピー出来なかたよ');
+            });
+        });
+
+        function createRainDrops() {
+            const rain = document.getElementById("rain");
+            const dropCount = 100;
+
+            for (let i = 0; i < dropCount; i++) {
+                const drop = document.createElement("div");
+                drop.classList.add("drop");
+
+                drop.style.left = Math.random() * 100 + "%";
+                drop.style.animationDuration = Math.random() * 2 + 1 + "s";
+                drop.style.animationDelay = Math.random() * 2 + "s";
+
+                rain.appendChild(drop);
+            }
+        }
+
+        createRainDrops();
+    </script>
 </body>
 </html>
